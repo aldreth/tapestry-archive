@@ -3,7 +3,7 @@ require 'httparty'
 require 'mini_exiftool_vendored'
 require 'nokogiri'
 
-def getImagesForPage(observation_id)
+def getDoc(observation_id)
   image_dir = './images/'
 
   cookie_name = 'tapestry_session'
@@ -17,8 +17,11 @@ def getImagesForPage(observation_id)
 
   raw = HTTParty.get(url, options)
 
-  doc = Nokogiri::HTML(raw)
+  Nokogiri::HTML(raw)
+end
 
+  def getImagesForPage(doc)
+  image_dir = './images/'
   images = doc.css('.obs-media-gallery-main img')
 
   title = doc.css('h1').first.text.strip
@@ -42,6 +45,17 @@ def getImagesForPage(observation_id)
   end
 end
 
-observation_id = '13980'
+def getNextObservationId(doc)
+  next_link = doc.css('li.next a')
+  return nil if next_link.nil? || next_link.empty?
+  next_link.attribute('href').value.match(/https:\/\/tapestryjournal.com\/s\/scarcroft-green-nursery\/observation\/(\d*)/)[1]
+end
 
-getImagesForPage(observation_id)
+
+observation_id = ENV['FIRST_OBSERVATION_ID']
+
+while observation_id do
+  doc = getDoc(observation_id)
+  getImagesForPage(doc)
+  observation_id = getNextObservationId(doc)
+end
