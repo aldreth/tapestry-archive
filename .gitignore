@@ -10,6 +10,9 @@
 /test/version_tmp/
 /tmp/
 
+# Ignore the images directory
+/images/*.jpeg
+
 
 # Used by dotenv library to load environment variables.
 .env
