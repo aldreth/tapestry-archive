@@ -1,0 +1,19 @@
+{
+  "name": "tapestry-archive",
+  "version": "1.0.0",
+  "description": "Download all the pictures & videos from tapestry",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/aldreth/tapestry-archive.git"
+  },
+  "author": "Edward Andrews-Hodgson",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/aldreth/tapestry-archive/issues"
+  },
+  "homepage": "https://github.com/aldreth/tapestry-archive#readme"
+}
