@@ -10,26 +10,33 @@ cookie_value = ENV['COOKIE_VALUE']
 
 options = { 'headers': { 'Cookie': "#{cookie_name}=#{cookie_value}" }}
 
-url = 'https://tapestryjournal.com/s/scarcroft-green-nursery/observation/14192'
+base_url = 'https://tapestryjournal.com/s/scarcroft-green-nursery/observation'
+
+observation_id = '13980'
+
+url = "#{base_url}/#{observation_id}"
 
 raw = HTTParty.get(url, options)
 
 doc = Nokogiri::HTML(raw)
 
-image_url = doc.css('.obs-media-gallery-main img').attribute('src').value
-
-image = HTTParty.get(image_url)
-
-
+images = doc.css('.obs-media-gallery-main img')
 
 title = doc.css('h1').first.text.strip
 image_description = doc.css('.page-note p').text.strip
 
-file_name = title.downcase.gsub(' ', '-') + '.jpeg'
+images.each_with_index do |img, idx|
+  image_url = img.attribute('src').value
+  image = HTTParty.get(image_url)
 
-File.write(file_name, image)
+  file_name = title.downcase.gsub(' ', '-')
+  file_name += "-#{idx}" if idx > 0
+  file_name += '.jpeg'
 
-photo =  MiniExiftool.new(file_name)
-photo.title = title
-photo.image_description = image_description
-photo.save
+  File.write(file_name, image)
+
+  photo =  MiniExiftool.new(file_name)
+  photo.title = title
+  photo.image_description = image_description
+  photo.save
+end
