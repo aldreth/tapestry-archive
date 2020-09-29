@@ -12,6 +12,7 @@
 
 # Ignore the images directory
 /images/*.jpeg
+/images/*.mp4
 
 
 # Used by dotenv library to load environment variables.
