@@ -28,9 +28,18 @@ def get_metadata(doc)
   title = doc.css('h1').first.text.strip
   description = doc.css('.page-note p').text.strip.gsub(/\s+/, ' ')
   doc.css('.obs-metadata p').first.text.strip.match(/Authored by (.*) added (.*)/)
-  author = Regexp.last_match(1)
-  date = Date.parse(Regexp.last_match(2))
-  { title: title, description: description, author: author, date: date }
+  artist = Regexp.last_match(1)
+  date = DateTime.parse(Regexp.last_match(2))
+  { title: title, description: description, artist: artist, date: date }
+end
+
+def set_metadata_for_image(file_name:, metadata:)
+  photo = MiniExiftool.new(file_name)
+  photo.title = metadata[:title]
+  photo.image_description = metadata[:description]
+  photo.artist = metadata[:artist]
+  photo.datetimeoriginal = metadata[:date]
+  photo.save
 end
 
 def save_images_for_page(images:, metadata:)
@@ -40,11 +49,7 @@ def save_images_for_page(images:, metadata:)
 
     file_name = get_file_name(metadata: metadata, index: idx)
     File.write(file_name, image)
-
-    photo = MiniExiftool.new(file_name)
-    photo.title = metadata[:title]
-    photo.image_description = metadata[:description]
-    photo.save
+    set_metadata_for_image(file_name: file_name, metadata: metadata)
   end
 end
 
