@@ -25,7 +25,7 @@ end
   images = doc.css('.obs-media-gallery-main img')
 
   title = doc.css('h1').first.text.strip
-  image_description = doc.css('.page-note p').text.strip
+  image_description = doc.css('.page-note p').text.strip.gsub(/\s+/, ' ')
 
   images.each_with_index do |img, idx|
     image_url = img.attribute('src').value
@@ -55,6 +55,7 @@ end
 observation_id = ENV['FIRST_OBSERVATION_ID']
 
 while observation_id do
+  puts observation_id
   doc = getDoc(observation_id)
   getImagesForPage(doc)
   observation_id = getNextObservationId(doc)
