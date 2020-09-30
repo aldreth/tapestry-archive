@@ -2,8 +2,10 @@
 
 require 'dotenv/load'
 require 'httparty'
+require 'kramdown'
 require 'mini_exiftool_vendored'
 require 'nokogiri'
+require 'pdfkit'
 
 BASE_URL = 'https://tapestryjournal.com/s/scarcroft-green-nursery/observation'
 
@@ -68,13 +70,20 @@ def save_videos_for_page(videos:, metadata:)
   end
 end
 
+def capture_observation_info(metadata)
+  md = "## #{metadata[:title]}\n\n"
+  md += "### #{metadata[:artist]}, #{metadata[:date].strftime('%-d %B %Y %l:%M%P')}\n\n"
+  md += "#{metadata[:description]}\n\n"
+  md
+end
+
 def save_media_for_page(doc)
   images = doc.css('.obs-media-gallery-main img')
   videos = doc.css('.obs-media-gallery-main .obs-video-wrapper video source')
   metadata = get_metadata(doc)
-
   save_images_for_page(images: images, metadata: metadata)
   save_videos_for_page(videos: videos, metadata: metadata)
+  capture_observation_info(metadata)
 end
 
 def get_next_observation_id(doc)
@@ -90,9 +99,15 @@ end
 
 observation_id = ENV['FIRST_OBSERVATION_ID']
 
+md =  "# Tapestry observations for #{ENV['NAME']}\n\n"
 while observation_id
   puts observation_id
   doc = get_doc(observation_id)
-  save_media_for_page(doc)
+  md += save_media_for_page(doc)
   observation_id = get_next_observation_id(doc)
 end
+
+html = Kramdown::Document.new(md).to_html
+kit = PDFKit.new(html, page_size: 'A4')
+pdf = kit.to_pdf
+File.write('./images/observations-info.pdf', pdf)
