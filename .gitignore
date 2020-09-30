@@ -12,6 +12,7 @@
 
 # Ignore the images directory
 /images/*.jpeg
+/images/*.pdf
 /images/*.mp4
 
 
