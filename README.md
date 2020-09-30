@@ -12,4 +12,4 @@ Download all the pictures & videos from your child's [tapestry](https://tapestry
 * Copy `env.example` to `.env` and fill in the details
 * Run `ruby main.rb`
 
-The images will be downloaded to the `images` directory. The files will be named with the title of the observation, and the EXIF title & description will be set with the title and note.
+The images will be downloaded to the `images` directory. The files will be named with the date & title of the observation, and the EXIF title, description, author & date taken will be set with the title, note, observer and date of observation.

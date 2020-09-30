@@ -17,8 +17,13 @@ def get_doc(observation_id)
 end
 
 def get_file_name(metadata:, index:, video: false)
-  file_name = './images/'
-  file_name += metadata[:title].downcase.gsub(' ', '-')
+  file_name = metadata[:date].strftime('./images/%Y-%m-%d-%H-%M-')
+  file_name += metadata[:title]
+               .downcase
+               .delete("^\u{0000}-\u{007F}")
+               .strip
+               .squeeze
+               .gsub(' ', '-')
   file_name += "-#{index}" if index.positive?
   file_name += video ? '.mp4' : '.jpeg'
   file_name
@@ -60,11 +65,6 @@ def save_videos_for_page(videos:, metadata:)
 
     file_name = get_file_name(metadata: metadata, index: idx, video: true)
     File.write(file_name, video)
-
-    # photo =  MiniExiftool.new(file_name)
-    # photo.title = title
-    # photo.image_description = image_description
-    # photo.save
   end
 end
 
