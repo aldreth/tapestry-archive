@@ -7,7 +7,7 @@ require 'mini_exiftool_vendored'
 require 'nokogiri'
 require 'pdfkit'
 
-BASE_URL = 'https://tapestryjournal.com/s/scarcroft-green-nursery/observation'
+BASE_URL = "https://tapestryjournal.com/s/#{ENV['SCHOOL']}/observation"
 
 def get_doc(observation_id)
   cookie_name = 'tapestry_session'
