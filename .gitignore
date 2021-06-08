@@ -11,9 +11,7 @@
 /tmp/
 
 # Ignore the images directory
-/images/*.jpeg
-/images/*.pdf
-/images/*.mp4
+/images/
 
 
 # Used by dotenv library to load environment variables.
