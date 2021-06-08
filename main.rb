@@ -14,8 +14,8 @@ def get_doc(observation_id)
   cookie_value = ENV['COOKIE_VALUE']
   options = { 'headers': { 'Cookie': "#{cookie_name}=#{cookie_value}" } }
   url = "#{BASE_URL}/#{observation_id}"
-  raw = HTTParty.get(url, options)
-  Nokogiri::HTML(raw)
+  response = HTTParty.get(url, options)
+  Nokogiri::HTML(response.body)
 end
 
 def get_file_name(metadata:, index:, video: false)
