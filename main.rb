@@ -7,6 +7,7 @@ require 'mini_exiftool_vendored'
 require 'nokogiri'
 require 'nokogumbo'
 require 'pdfkit'
+require 'fileutils'
 
 BASE_URL = "https://tapestryjournal.com/s/#{ENV['SCHOOL']}/observation"
 
@@ -56,6 +57,9 @@ def save_images_for_page(images:, metadata:)
     image = HTTParty.get(image_url)
 
     file_name = get_file_name(metadata: metadata, index: idx)
+    if !Dir.exist?(File.dirname(file_name))
+      FileUtils.mkdir_p(File.dirname(file_name))
+    end
     File.write(file_name, image)
     set_metadata_for_image(file_name: file_name, metadata: metadata)
   end
@@ -67,6 +71,9 @@ def save_videos_for_page(videos:, metadata:)
     video = HTTParty.get(video_url)
 
     file_name = get_file_name(metadata: metadata, index: idx, video: true)
+    if !Dir.exist?(File.dirname(file_name))
+      FileUtils.mkdir_p(File.dirname(file_name))
+    end
     File.write(file_name, video)
   end
 end
