@@ -7,6 +7,7 @@ gem 'httparty'
 gem 'kramdown'
 gem 'mini_exiftool_vendored'
 gem 'nokogiri'
+gem 'nokogumbo'
 gem 'pdfkit'
 gem 'rubocop', require: false
 gem 'wkhtmltopdf-binary'

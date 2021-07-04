@@ -5,17 +5,18 @@ require 'httparty'
 require 'kramdown'
 require 'mini_exiftool_vendored'
 require 'nokogiri'
+require 'nokogumbo'
 require 'pdfkit'
 
-BASE_URL = 'https://tapestryjournal.com/s/scarcroft-green-nursery/observation'
+BASE_URL = "https://tapestryjournal.com/s/#{ENV['SCHOOL']}/observation"
 
 def get_doc(observation_id)
   cookie_name = 'tapestry_session'
   cookie_value = ENV['COOKIE_VALUE']
   options = { 'headers': { 'Cookie': "#{cookie_name}=#{cookie_value}" } }
   url = "#{BASE_URL}/#{observation_id}"
-  raw = HTTParty.get(url, options)
-  Nokogiri::HTML(raw)
+  response = HTTParty.get(url, options)
+  Nokogiri.HTML5(response.body)
 end
 
 def get_file_name(metadata:, index:, video: false)

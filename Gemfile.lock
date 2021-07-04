@@ -18,6 +18,8 @@ GEM
     multi_xml (0.6.0)
     nokogiri (1.10.10)
       mini_portile2 (~> 2.4.0)
+    nokogumbo (2.0.5)
+      nokogiri (~> 1.8, >= 1.8.4)
     parallel (1.19.2)
     parser (2.7.1.5)
       ast (~> 2.4.1)
@@ -49,6 +51,7 @@ DEPENDENCIES
   kramdown
   mini_exiftool_vendored
   nokogiri
+  nokogumbo
   pdfkit
   rubocop
   wkhtmltopdf-binary
