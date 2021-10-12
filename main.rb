@@ -19,7 +19,7 @@ def get_doc(observation_id)
   Nokogiri.HTML5(response.body)
 end
 
-def get_file_name(metadata:, index:, video: false)
+def get_file_name(output_path:, metadata:, index:, video: false)
   file_name = metadata[:date].strftime("#{output_path}/%Y-%m-%d-%H-%M-")
   file_name += metadata[:title]
                .downcase
@@ -50,12 +50,12 @@ def set_metadata_for_image(file_name:, metadata:)
   photo.save
 end
 
-def save_images_for_page(images:, metadata:)
+def save_images_for_page(output_path:, images:, metadata:)
   images.each_with_index do |img, idx|
     image_url = img.attribute('src').value
     image = HTTParty.get(image_url)
 
-    file_name = get_file_name(metadata: metadata, index: idx)
+    file_name = get_file_name(output_path: output_path, metadata: metadata, index: idx)
     if !Dir.exist?(File.dirname(file_name))
       FileUtils.mkdir_p(File.dirname(file_name))
     end
@@ -64,12 +64,12 @@ def save_images_for_page(images:, metadata:)
   end
 end
 
-def save_videos_for_page(videos:, metadata:)
+def save_videos_for_page(output_path:, videos:, metadata:)
   videos.each_with_index do |img, idx|
     video_url = img.attribute('src').value
     video = HTTParty.get(video_url)
 
-    file_name = get_file_name(metadata: metadata, index: idx, video: true)
+    file_name = get_file_name(output_path: output_path, metadata: metadata, index: idx, video: true)
     if !Dir.exist?(File.dirname(file_name))
       FileUtils.mkdir_p(File.dirname(file_name))
     end
@@ -84,12 +84,12 @@ def capture_observation_info(metadata)
   md
 end
 
-def save_media_for_page(doc)
+def save_media_for_page(output_path:, doc:)
   images = doc.css('.obs-media-gallery-main img')
   videos = doc.css('.obs-media-gallery-main .obs-video-wrapper video source')
   metadata = get_metadata(doc)
-  save_images_for_page(images: images, metadata: metadata)
-  save_videos_for_page(videos: videos, metadata: metadata)
+  save_images_for_page(output_path: output_path, images: images, metadata: metadata)
+  save_videos_for_page(output_path: output_path, videos: videos, metadata: metadata)
   capture_observation_info(metadata)
 end
 
@@ -105,15 +105,27 @@ def get_next_observation_id(doc)
 end
 
 BASE_URL = "https://tapestryjournal.com/s/#{ENV['SCHOOL']}/observation"
-observation_id = ENV['FIRST_OBSERVATION_ID']
 output_path = File.expand_path(ENV['OUTPUT_PATH'])
 FileUtils.mkdir_p(output_path) unless Dir.exist?(output_path)
+puts "Saving to #{output_path}"
+
+observation_id_file="#{output_path}/observation_id.txt"
+if File.exist?(observation_id_file)
+  observation_id = Integer(File.read("#{output_path}/observation_id.txt"))
+  puts "Continuing from after last saved observation # #{observation_id}"
+  doc = get_doc(observation_id)
+  observation_id = get_next_observation_id(doc) # skip last completed entry
+else
+  observation_id = ENV["FIRST_OBSERVATION_ID"]
+  puts "Starting from configured observation: # #{observation_id}"
+end
 
 md =  "# Tapestry observations for #{ENV['NAME']}\n\n"
 while observation_id
   puts observation_id
   doc = get_doc(observation_id)
-  md += save_media_for_page(doc)
+  md += save_media_for_page(output_path: output_path, doc: doc)
+  File.write("#{output_path}/observation_id.txt", observation_id)
   observation_id = get_next_observation_id(doc)
 end
 
