@@ -9,7 +9,9 @@ BASE_URL = "https://tapestryjournal.com/s/#{ENV['SCHOOL']}/observation"
 
 md =  "# Tapestry observations for #{ENV['NAME']}\n\n"
 
-Dir.each_child(output_path) do |observation|
+observation_folders = Dir.entries(output_path).sort.reverse.select { |entry| entry[0] != "." }
+
+observation_folders.each do |observation|
   observation_path="#{output_path}/#{observation}/"
   next unless Dir.exists?(observation_path)
   puts "#{output_path}/#{observation}/"
