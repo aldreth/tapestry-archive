@@ -120,4 +120,4 @@ end
 html = Kramdown::Document.new(md).to_html
 kit = PDFKit.new(html, page_size: 'A4')
 pdf = kit.to_pdf
-File.write("#{output_path}/observations-info.pdf", pdf)
+File.write("#{output_path}/observations-info-to-#{observation_id}.pdf", pdf)
