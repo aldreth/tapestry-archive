@@ -21,12 +21,12 @@ observation_folders.each do |observation|
     next if observation_file =~ /observation.*\.txt/
     observation_file_path="#{observation}/#{observation_file}"
     if observation_file =~ /.*\.mp4/
-      md += "<video src='#{observation_file_path}' alt='#{observation_file_path}' controls></video><br/><br/>\n\n"
+      md += "<video src='#{observation_file_path}' alt='#{observation_file_path}' controls></video>\n"
     else
-      md += "[![#{observation_file_path}](#{observation_file_path})](#{observation_file_path})\n\n"
+      md += "[![#{observation_file_path}](#{observation_file_path})](#{observation_file_path})\n"
     end
   end
-  md += "<#{BASE_URL}/#{observation}>\n\n"
+  md += "\n\n<#{BASE_URL}/#{observation}>\n\n"
 end
 
 File.write("#{output_path}/index.md", md)
