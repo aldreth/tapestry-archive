@@ -120,16 +120,15 @@ else
   puts "Starting from configured observation: # #{observation_id}"
 end
 
-md =  "# Tapestry observations for #{ENV['NAME']}\n\n"
 while observation_id
   puts observation_id
   doc = get_doc(observation_id)
   md += save_media_for_page(output_path: output_path, doc: doc)
+  html = Kramdown::Document.new(md).to_html
+  kit = PDFKit.new(html, page_size: 'A4')
+  pdf = kit.to_pdf
+  File.write("#{output_path}/observations-#{observation_id}.pdf", pdf)
   File.write("#{output_path}/observation_id.txt", observation_id)
   observation_id = get_next_observation_id(doc)
 end
 
-html = Kramdown::Document.new(md).to_html
-kit = PDFKit.new(html, page_size: 'A4')
-pdf = kit.to_pdf
-File.write("#{output_path}/observations-info-to-#{observation_id}.pdf", pdf)
