@@ -10,9 +10,6 @@ require 'nokogumbo'
 require 'pdfkit'
 require 'fileutils'
 
-BASE_URL = "https://tapestryjournal.com/s/#{ENV['SCHOOL']}/observation"
-output_path = ENV['OUTPUT_PATH']
-
 def get_doc(observation_id)
   cookie_name = 'tapestry_session'
   cookie_value = ENV['COOKIE_VALUE']
@@ -107,7 +104,10 @@ def get_next_observation_id(doc)
            .first
 end
 
+BASE_URL = "https://tapestryjournal.com/s/#{ENV['SCHOOL']}/observation"
 observation_id = ENV['FIRST_OBSERVATION_ID']
+output_path = File.expand_path(ENV['OUTPUT_PATH'])
+FileUtils.mkdir_p(output_path) unless Dir.exist?(output_path)
 
 md =  "# Tapestry observations for #{ENV['NAME']}\n\n"
 while observation_id
