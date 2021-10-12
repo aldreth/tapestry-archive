@@ -11,6 +11,7 @@ require 'pdfkit'
 require 'fileutils'
 
 BASE_URL = "https://tapestryjournal.com/s/#{ENV['SCHOOL']}/observation"
+output_path = ENV['OUTPUT_PATH']
 
 def get_doc(observation_id)
   cookie_name = 'tapestry_session'
@@ -22,7 +23,7 @@ def get_doc(observation_id)
 end
 
 def get_file_name(metadata:, index:, video: false)
-  file_name = metadata[:date].strftime('./images/%Y-%m-%d-%H-%M-')
+  file_name = metadata[:date].strftime("#{output_path}/%Y-%m-%d-%H-%M-")
   file_name += metadata[:title]
                .downcase
                .delete("^\u{0000}-\u{007F}")
@@ -119,4 +120,4 @@ end
 html = Kramdown::Document.new(md).to_html
 kit = PDFKit.new(html, page_size: 'A4')
 pdf = kit.to_pdf
-File.write('./images/observations-info.pdf', pdf)
+File.write("#{output_path}/observations-info.pdf", pdf)
