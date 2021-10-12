@@ -3,11 +3,9 @@
 
 require 'dotenv/load'
 require 'httparty'
-require 'kramdown'
 require 'mini_exiftool_vendored'
 require 'nokogiri'
 require 'nokogumbo'
-require 'pdfkit'
 require 'fileutils'
 
 def get_doc(observation_id)
@@ -56,9 +54,6 @@ def save_images_for_page(output_path:, images:, metadata:)
     image = HTTParty.get(image_url)
 
     file_name = get_file_name(output_path: output_path, metadata: metadata, index: idx)
-    if !Dir.exist?(File.dirname(file_name))
-      FileUtils.mkdir_p(File.dirname(file_name))
-    end
     File.write(file_name, image)
     set_metadata_for_image(file_name: file_name, metadata: metadata)
   end
@@ -70,9 +65,6 @@ def save_videos_for_page(output_path:, videos:, metadata:)
     video = HTTParty.get(video_url)
 
     file_name = get_file_name(output_path: output_path, metadata: metadata, index: idx, video: true)
-    if !Dir.exist?(File.dirname(file_name))
-      FileUtils.mkdir_p(File.dirname(file_name))
-    end
     File.write(file_name, video)
   end
 end
@@ -123,11 +115,10 @@ end
 while observation_id
   puts observation_id
   doc = get_doc(observation_id)
-  md += save_media_for_page(output_path: output_path, doc: doc)
-  html = Kramdown::Document.new(md).to_html
-  kit = PDFKit.new(html, page_size: 'A4')
-  pdf = kit.to_pdf
-  File.write("#{output_path}/observations-#{observation_id}.pdf", pdf)
+  observation_path="#{output_path}/#{observation_id}"
+  FileUtils.mkdir_p(observation_path) unless Dir.exist?(observation_path)
+  md=save_media_for_page(output_path: observation_path, doc: doc)
+  File.write("#{observation_path}/observations-#{observation_id}.txt", md)
   File.write("#{output_path}/observation_id.txt", observation_id)
   observation_id = get_next_observation_id(doc)
 end
