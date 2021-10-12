@@ -17,7 +17,8 @@ observation_folders.each do |observation|
   puts "#{output_path}/#{observation}/"
   meta = File.read("#{observation_path}observations-#{observation}.txt")
   md += meta
-  Dir.each_child("#{output_path}/#{observation}") do |observation_file|
+  Dir.entries("#{output_path}/#{observation}").sort.each do |observation_file|
+    next if observation_file[0] == "."
     next if observation_file =~ /observation.*\.txt/
     observation_file_path="#{observation}/#{observation_file}"
     if observation_file =~ /.*\.mp4/
