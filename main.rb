@@ -86,7 +86,7 @@ def save_media_for_page(output_path:, doc:)
 end
 
 def get_next_observation_id(doc)
-  next_link = doc.css('li.next a')
+  next_link = doc.css('li.previous a')
   return nil if next_link.nil? || next_link.empty?
 
   next_link.attribute('href')
