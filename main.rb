@@ -30,9 +30,14 @@ def get_file_name(output_path:, metadata:, index:, video: false)
   file_name
 end
 
+def markdown_description(raw)
+  # remove leading and trailing from every line, then use markdown hard wrap (trailing double space) to retain layout
+  raw.strip.split("\n").map{|l|l.strip}.join("  \n")
+end
+
 def get_metadata(doc)
   title = doc.css('h1').first.text.strip
-  description = doc.css('.page-note p').text.strip.gsub(/\s+/, ' ')
+  description = markdown_description(doc.css('.page-note p').text)
   doc.css('.obs-metadata p').first.text.strip.match(/Authored by (.*) added (.*)/)
   artist = Regexp.last_match(1)
   date = DateTime.parse(Regexp.last_match(2))
