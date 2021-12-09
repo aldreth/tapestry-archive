@@ -7,6 +7,7 @@ require 'mini_exiftool_vendored'
 require 'nokogiri'
 require 'nokogumbo'
 require 'fileutils'
+require 'zaru'
 
 def get_doc(observation_id)
   cookie_name = 'tapestry_session'
@@ -19,12 +20,13 @@ end
 
 def get_file_name(output_path:, metadata:, index:, video: false)
   file_name = metadata[:date].strftime("#{output_path}/%Y-%m-%d-%H-%M-")
-  file_name += metadata[:title]
+  title = metadata[:title]
                .downcase
                .delete("^\u{0000}-\u{007F}")
                .strip
                .squeeze
                .gsub(' ', '-')
+  file_name += Zaru.sanitize!(title)
   file_name += "-#{index}" if index.positive?
   file_name += video ? '.mp4' : '.jpeg'
   file_name
