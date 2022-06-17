@@ -11,3 +11,4 @@ gem 'nokogumbo'
 gem 'pdfkit'
 gem 'rubocop', require: false
 gem 'wkhtmltopdf-binary'
+gem 'zaru'
